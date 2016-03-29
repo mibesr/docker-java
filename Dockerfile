@@ -1,19 +1,13 @@
-FROM xiaocao/mesos
+FROM nimmis/ubuntu:15.04
 
-ENV VERSION_CHRONOS 2.5.0
+# disable interactive functions
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends maven node npm git && \
-    ln -s /usr/bin/nodejs /usr/bin/node
+# set default java environment variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-RUN git clone https://github.com/mesos/chronos.git /chronos
-
-WORKDIR /chronos
-
-RUN mvn clean package && \
-    apt-get remove -y --auto-remove maven node npm git && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-EXPOSE 8080
-
-ENTRYPOINT ["bin/start-chronos.bash"]
+RUN apt-get install -y software-properties-common && \
+add-apt-repository ppa:openjdk-r/ppa -y && \
+apt-get update && \
+apt-get install -y --no-install-recommends openjdk-8-jre && \
+rm -rf /var/lib/apt/lists/*
