@@ -1,19 +1,16 @@
-FROM xiaocao/mesos
+FROM ubuntu:15.04
 
-ENV VERSION_CHRONOS 2.5.0
+# disable interactive functions
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends maven node npm git && \
-    ln -s /usr/bin/nodejs /usr/bin/node
+# set default java environment variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle/
 
-RUN git clone https://github.com/mesos/chronos.git /chronos
-
-WORKDIR /chronos
-
-RUN mvn clean package && \
-    apt-get remove -y --auto-remove maven node npm git && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-EXPOSE 8080
-
-ENTRYPOINT ["bin/start-chronos.bash"]
+RUN add-apt-repository ppa:webupd8team/java -y && \
+echo debconf shared/accepted-oracle-license-v1-1 select true |  debconf-set-selections && \
+echo debconf shared/accepted-oracle-license-v1-1 seen true |  debconf-set-selections && \
+apt-get update && \
+apt-get install -y --no-install-recommends oracle-java8-installer && \
+apt-get install -y --no-install-recommends oracle-java8-set-default && \
+rm -rf /var/cache/oracle-jdk8-installer && \
+rm -rf /var/lib/apt/lists/*
