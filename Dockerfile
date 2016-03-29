@@ -1,4 +1,4 @@
-FROM nimmis/ubuntu:15.04
+FROM ubuntu:15.04
 
 # disable interactive functions
 ENV DEBIAN_FRONTEND noninteractive
